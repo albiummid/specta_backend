@@ -11,12 +11,8 @@ app.use(express.static('feature'));
 app.use(fileUpload());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('SPECTA SERVER RUNNING AT PORT:' + port)
-})
-
 const router = express.Router();
-app.use(router);
+app.use('/api/v1', router);
 
 const MongoClient = require('mongodb').MongoClient;
 const { ObjectId } = require('bson');
