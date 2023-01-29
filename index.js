@@ -15,6 +15,8 @@ app.get('/', (req, res) => {
     res.send('SPECTA SERVER RUNNING AT PORT:' + port)
 })
 
+const router = express.Router();
+app.use(router);
 
 const MongoClient = require('mongodb').MongoClient;
 const { ObjectId } = require('bson');
@@ -33,7 +35,7 @@ client.connect(err => {
     const footerCollection = client.db(`${process.env.DB_NAME}`).collection('footer');
 
 
-    app.post('/addAFeature', (req, res) => {
+    router.post('/addAFeature', (req, res) => {
         const subject = req.body.subject;
         const details = req.body.details;
         const file = req.files.file;
@@ -51,7 +53,7 @@ client.connect(err => {
     })
 
     // get feature
-    app.get('/features', (req, res) => {
+    router.get('/features', (req, res) => {
         featuresCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents)
@@ -60,7 +62,7 @@ client.connect(err => {
 
 
     // addService
-    app.post('/addService', (req, res) => {
+    router.post('/addService', (req, res) => {
         const e = req.query.e
         const title = req.body.title;
         const price = req.body.price;
@@ -84,7 +86,7 @@ client.connect(err => {
     })
 
     // getService
-    app.get('/services', (req, res) => {
+    router.get('/services', (req, res) => {
         serviceCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents)
@@ -92,7 +94,7 @@ client.connect(err => {
     })
 
     // get servicesbyID
-    app.get('/serviceById/:id', (req, res) => {
+    router.get('/serviceById/:id', (req, res) => {
         const id = req.params.id;
         serviceCollection.find({ _id: ObjectId(`${id}`) })
             .toArray((err, documents) => {
@@ -101,7 +103,7 @@ client.connect(err => {
     })
 
     // addReview
-    app.post('/addReview', (req, res) => {
+    router.post('/addReview', (req, res) => {
         const comment = req.body.comment;
         const name = req.body.name;
         const location = req.body.location;
@@ -119,7 +121,7 @@ client.connect(err => {
 
     })
     // getReview
-    app.get('/reviews', (req, res) => {
+    router.get('/reviews', (req, res) => {
         reviewCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents)
@@ -127,7 +129,7 @@ client.connect(err => {
     })
 
     // addAdmin
-    app.post('/addAdmin', (req, res) => {
+    router.post('/addAdmin', (req, res) => {
         const email = req.body;
         adminCollection.insertOne(email)
             .then(result => {
@@ -135,7 +137,7 @@ client.connect(err => {
             })
     })
     // geAdmin
-    app.get('/isAdmin', (req, res) => {
+    router.get('/isAdmin', (req, res) => {
         const email = req.query.email;
         adminCollection.find({ email: email })
             .toArray((err, documents) => {
@@ -145,7 +147,7 @@ client.connect(err => {
     })
 
     // addOrders
-    app.post('/addOrder', (req, res) => {
+    router.post('/addOrder', (req, res) => {
         const order = req.body;
         orderCollection.insertOne(order)
             .then(result => {
@@ -153,7 +155,7 @@ client.connect(err => {
             })
     })
     // deleteOrder
-    app.delete('/deleteOrder/:id', (req, res) => {
+    router.delete('/deleteOrder/:id', (req, res) => {
         orderCollection.deleteOne({ _id: ObjectId(`${req.params.id}`) })
             .then(result => {
                 res.send(result.deletedCount > 0)
@@ -161,21 +163,21 @@ client.connect(err => {
     })
 
     // updateOrder
-    app.patch('/updateOrder/:id', (req, res) => {
+    router.patch('/updateOrder/:id', (req, res) => {
         orderCollection.updateOne({ _id: ObjectId(`${req.params.id}`) }, {
             $set: { status: req.body.status }
         })
             .then(result => res.send(result.modifiedCount > 0))
     })
 
-    app.get('/ordersByEmail', (req, res) => {
+    router.get('/ordersByEmail', (req, res) => {
         const email = req.query.email;
         orderCollection.find({ email: email })
             .toArray((err, documents) => {
                 res.send(documents);
             })
     })
-    app.get('/allOrders', (req, res) => {
+    router.get('/allOrders', (req, res) => {
         orderCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents);
@@ -183,7 +185,7 @@ client.connect(err => {
     })
 
     // footerInser
-    app.get('/footer', (req, res) => {
+    router.get('/footer', (req, res) => {
         footerCollection.find({})
             .toArray((err, documents) => {
                 res.send(documents)
@@ -191,7 +193,7 @@ client.connect(err => {
     });
 
 
-    app.get('/tokenCheck/:id', (req, res) => {
+    router.get('/tokenCheck/:id', (req, res) => {
         console.log();
     })
 
@@ -201,4 +203,6 @@ client.connect(err => {
 });
 
 
-app.listen(port)
+app.listen(port, () => {
+    console.log(`SERVER STARTED AT PORT: ${port}`);
+})
