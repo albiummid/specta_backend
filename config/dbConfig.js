@@ -9,13 +9,13 @@ async function connectToServer(callback = () => { }) {
     client.connect(function (err, db) {
         if (err || !db) {
             console.log("NO_DB", err)
-            return callback(err);
+            return err
         }
 
         dbConnection = db.db(process.env.DB_NAME);
         console.log("Successfully connected to MongoDB.");
 
-        return callback(db);
+        return dbConnection
     });
 }
 
@@ -24,8 +24,12 @@ async function getDB() {
 }
 
 const featureCollection = async () => {
-    const dbConnect = await getDB()
-    return await dbConnect.collection('features')
+    try {
+        const dbConnect = await getDB()
+        return await dbConnect.collection('features')
+    } catch (err) {
+        console.log("ERROR>>>", err)
+    }
 }
 const adminCollection = async () => {
     const dbConnect = await getDB()
