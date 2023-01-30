@@ -1,9 +1,8 @@
-const { getDB, connectDB } = require("../config/dbConfig");
+const { getDB, connectDB, featureCollection, getFeatures } = require("../config/dbConfig");
 
 exports.addFeature = async (req, res) => {
     try {
         await connectToServer(async (db) => {
-            const Features = await db.collection('features');
             const { subject, details } = req.body;
             const { file } = req.files;
             const encImg = file.data.toString('base64');
@@ -12,9 +11,8 @@ exports.addFeature = async (req, res) => {
                 size: file.size,
                 img: Buffer.from(encImg, 'base64')
             };
-
-            let insertFeature = await Features.insertOne({ subject, details, icon });
-            res.send(result.insertedCount > 0)
+            await db.collection('features').insertOne({ subject, details, icon });
+            res.send(result.insertedCount > 0);
         })
 
     } catch (err) {
