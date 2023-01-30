@@ -5,17 +5,17 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 let dbConnection;
 
-async function connectToServer(callback = () => { }) {
+async function connectDB(callback = () => { }) {
     client.connect(function (err, db) {
         if (err || !db) {
             console.log("NO_DB", err)
-            return err
+            return
         }
 
         dbConnection = db.db(process.env.DB_NAME);
         console.log("Successfully connected to MongoDB.");
 
-        return dbConnection
+        return callback(dbConnection)
     });
 }
 
@@ -23,39 +23,10 @@ async function getDB() {
     return dbConnection;
 }
 
-const featureCollection = async () => {
-    try {
-        const dbConnect = await getDB()
-        return await dbConnect.collection('features')
-    } catch (err) {
-        console.log("ERROR>>>", err)
-    }
-}
-const adminCollection = async () => {
-    const dbConnect = await getDB()
-    return await dbConnect.collection('admins')
-}
-const footerCollection = async () => {
-    const dbConnect = await getDB()
-    return await dbConnect.collection('footer')
-}
-const orderCollection = async () => {
-    const dbConnect = await getDB()
-    return await dbConnect.collection('orders')
-}
-const reviewCollection = async () => {
-    const dbConnect = await getDB()
-    return await dbConnect.collection('reviews')
-}
-const serviceCollection = async () => {
-    const dbConnect = await getDB()
-    return await dbConnect.collection('services')
-}
 
 module.exports = {
-    connectToServer,
+    connectDB,
     getDB,
-    featureCollection
 }
 
 // const dbConnect = getDB();

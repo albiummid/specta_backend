@@ -8,13 +8,14 @@ const { connectToServer } = require('./config/dbConfig');
 
 
 const app = express();
+// connectToServer();
 app.use(cors());
 app.use(express.static('feature'));
 app.use(fileUpload());
 app.use(express.json());
 const { ObjectId } = require('bson');
 
-connectToServer();
+
 
 const feature = require('./routes/feature');
 
